@@ -1,8 +1,10 @@
-h1. elasticsearch-head
+
+http://192.168.0.215:9200/ | 
+http://localhost:9100/?base_uri=http://192.168.0.215:9200/
 
 h2. A web front end for an Elasticsearch cluster
 
-h3. "http://mobz.github.io/elasticsearch-head":http://mobz.github.io/elasticsearch-head
+h3. http://mobz.github.io/elasticsearch-head
 
 h2. Running
 
@@ -15,7 +17,7 @@ h4. Running with built in server
 * @npm install@
 * @npm run start@
 
-* @open@ "http://localhost:9100/":http://localhost:9100/
+* @open@ http://localhost:9100/
 
 This will start a local webserver running on port 9100 serving elasticsearch-head
 
@@ -26,7 +28,7 @@ h4. Running with docker
 * for Elasticsearch 1.x: @docker run -p 9100:9100  mobz/elasticsearch-head:1@
 * for fans of alpine there is @mobz/elasticsearch-head:5-alpine@
   
-* @open@ "http://localhost:9100/":http://localhost:9100/
+* @open@ http://localhost:9100/
 
 h4. Running as a Chrome extension
 
@@ -68,12 +70,31 @@ By default elasticsearch exposes a http rest API on port 9200 which elasticsearc
 
 h4. Enable CORS in elasticsearch
 
-When not running as a plugin of elasticsearch (which is not even possible from version 5) you must enable "CORS":http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-http.html in elasticsearch otherwise your browser will rejects requests which appear insecure.
+When not running as a plugin of elasticsearch (which is not even possible from version 5) you must enable 
+"CORS": http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-http.html in elasticsearch otherwise your browser will rejects requests which appear insecure.
 
 In elasticsearch configuration;
 
-* add @http.cors.enabled: true@
+* add  
+```
+http.cors.enabled: true  
+http.cors.allow-origin: "*"  
+```
 * you must also set @http.cors.allow-origin@ because no origin allowed by default. @http.cors.allow-origin: "*"@ is valid value, however it's considered as a security risk as your cluster is open to cross origin from *anywhere*.
+
+```
+$ cat elasticsearch.yml | grep -v "#"
+
+cluster.name: elasticsearch
+
+network.host: 0.0.0.0
+http.port: 9200
+transport.tcp.port: 9300
+transport.host: localhost
+
+http.cors.enabled: true
+http.cors.allow-origin: "*"
+```
 
 h4. Basic Authentication
 
@@ -115,23 +136,5 @@ Then
 Changes to both _site and src directories *must* be committed, to allow people to 
 run elasticsearch-head without running dev tools and follow existing dev patterns, 
 such as indenting with tabs.
-
-h5. Contributing an Internationalisation
-
-* Chinese by "darkcount":https://github.com/hangxin1940
-* English (primary) by "Ben Birch":https://twitter.com/mobz
-* French by "David Pilato":https://twitter.com/dadoonet
-* Portuguese by "caiodangelo":https://github.com/caiodangelo
-* Turkish by "Cemre Mengu":https://github.com/cemremengu
-* Japanese by "Satoshi Kimura":https://github.com/satoshi-kimura
-
-To contribute an internationalisation
-
-# Follow "Contributing" instructions above
-# Find your 2-character "ISO 639-1 language code":http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
-# edit _site/index.html to add your 2 letter language code to the data-langs attribute of this line @<script src="_site/i18n.js" data-baseDir="_site/lang" data-langs="en,fr,your_lang_here"></script>@
-# make a copy of @src/app/langs/en_strings.js@ prefixed with your language code
-# convert english strings and fragments to your language. "Formatting Rules":http://docs.oracle.com/javase/tutorial/i18n/format/messageintro.html
-# Submit a pull request
 
 !http://mobz.github.com/elasticsearch-head/screenshots/clusterOverview.png(ClusterOverview Screenshot)!
